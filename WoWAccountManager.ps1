@@ -19,12 +19,14 @@ if ($getAccounts) {
     Write-Host "Please select an option:" -ForegroundColor Yellow
     Write-Host "1. Launch WoW" -ForegroundColor Yellow
     Write-Host "2. Add/Remove accounts" -ForegroundColor Yellow
+    Write-Host "3. Reinitialize WoW.exe Location (if moved or switching to Vanilla Fixes/Vanilla Tweaks)" -ForegroundColor Yellow
 
     $selection = Read-Host "Enter your choice (1 or 2)"
 
     switch ($selection) {
         1 { WoWHandler }
         2 { CredentialHandler }
+        3 { FindWoW }
         default { Write-Host "Invalid selection. Please try again." -ForegroundColor Red }
     }
 
@@ -41,9 +43,17 @@ Function FindWoW {
 ##################
 #Searches the drive you choose for the WoW.exe, it first finds the WoW folder and then locates the .exe inside.
 
-
 # Define the target file name you're searching for
 $fileName = "WoW.exe"
+
+# Define the additional file names you're searching for
+$vanillaFixesFileName = "VanillaFixes.exe"
+$wowTweakedFileName = "WoW_Tweaked.exe"
+
+# Initialize variables to store the found files
+$foundVanillaFixes = $null
+$foundWoWTweaked = $null
+
 # Define the folder name pattern that includes wildcards to match versioned folders (e.g., "World of Warcraft 1.12")
 $folderName = "World of Warcraft"
 
@@ -57,7 +67,6 @@ $selectedDrive = $drives | Select-Object -ExpandProperty DeviceID | Out-GridView
 if ($selectedDrive) {
 
 Write-Host "Drive $selectedDrive was selected. Please wait while WoW.exe is located." -ForegroundColor Yellow
-
 
 # Get list of directories under $selectedDrive (limit depth to 3 levels for optimization)
 $folders = Get-ChildItem "$selectedDrive\" -Recurse -Directory -Depth 3 -ErrorAction SilentlyContinue
@@ -86,6 +95,10 @@ foreach ($folder in $wowFolders) {
     # If WoW.exe is found, store it and break the loop
     if ($file) {
         $foundFile = $file
+        # Search for VanillaFixes.exe in the same folder
+        $foundVanillaFixes = Get-ChildItem -Path $folder.FullName -Recurse -Filter $vanillaFixesFileName -File -ErrorAction SilentlyContinue
+        # Search for WoW_Tweaked.exe in the same folder
+        $foundWoWTweaked = Get-ChildItem -Path $folder.FullName -Recurse -Filter $wowTweakedFileName -File -ErrorAction SilentlyContinue
         break
     }
 
@@ -98,19 +111,26 @@ Write-Progress -Activity "Completed" -Status "Done" -Completed
 
 # Output the found file if it was found, or notify that it wasn't found
 if ($foundFile) {
-    Write-Host "Found file: $($foundFile.FullName) `n Saving location to $env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt." -ForegroundColor Yellow
+    $finalPath = $foundFile.FullName
+    if ($foundVanillaFixes) {
+        $finalPath = $foundVanillaFixes.FullName
+    }
+    if ($foundWoWTweaked) {
+        $finalPath += " " + $foundWoWTweaked.Name
+    }
+    Write-Host "Found file: $finalPath `n Saving location to $env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt." -ForegroundColor Yellow
         
     # Define the path for the file
     $WoWSavedfilePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt"
 
-        # Check if the directory exists, and if not, create it
-        $directory = [System.IO.Path]::GetDirectoryName($WoWSavedfilePath)
-        if (-not (Test-Path $directory)) {
+    # Check if the directory exists, and if not, create it
+    $directory = [System.IO.Path]::GetDirectoryName($WoWSavedfilePath)
+    if (-not (Test-Path $directory)) {
         New-Item -ItemType Directory -Path $directory -Force
-        }
+    }
     
     # Save the WoW file path to a text file after making sure it exists.
-    $foundFile.FullName | Out-File "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt" -Force
+    $finalPath | Out-File "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt" -Force
 } else {
     Write-Output "WoW.exe not found."
 }
