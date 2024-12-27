@@ -154,7 +154,7 @@ if (-not $account) {
 $AccountEncrypted = Get-Content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted\$account" | ConvertTo-SecureString
 $credential = New-Object System.Management.Automation.PSCredential ($account.BaseName, $AccountEncrypted)
 # Launch Application
-Start-Process "C:\WoW 1.12\World of Warcraft 1.12\WoW.exe"
+Start-Process "$wowLocation" -PassThru
 
 # Wait for application to launch
 Start-Sleep -Seconds 5
