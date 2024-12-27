@@ -9,14 +9,13 @@ function MainMenu {
 ## The user is prompted to make some encrypted credentials if there are none found.
 ## If there are encrypted credentials found, the user is prompted to choose an account to log in with.
 Write-Host "Welcome to the WoW Auto-Login Script" -ForegroundColor Yellow -BackgroundColor DarkBlue
-Write-Host "Welcome to the WoW Auto-Login Script" -ForegroundColor Yellow -BackgroundColor Black
 Write-Host "Added accounts can be deleted here: $env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted" -ForegroundColor Yellow -BackgroundColor Black
 
 # Check if any encrypted cached accounts were found
 $getAccounts = InitializeAccounts
 if ($getAccounts) {
-    Write-Host "$($getAccounts.Count) cached account(s) was found" -ForegroundColor Yellow
-    foreach($account in $getAccounts){ Write-Host "- $($account.BaseName) `n"}
+    Write-Host "$($getAccounts.Count) cached account(s) found:" -ForegroundColor DarkMagenta
+    foreach($account in $getAccounts){ Write-Host "- $($account.BaseName)" -ForegroundColor DarkMagenta}
     Write-Host "Please select an option:" -ForegroundColor Yellow
     Write-Host "1. Launch WoW" -ForegroundColor Yellow
     Write-Host "2. Add/Remove accounts" -ForegroundColor Yellow
