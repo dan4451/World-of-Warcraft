@@ -18,8 +18,8 @@ else{FindWoW}
 # Check if any encrypted cached accounts were found
 $getAccounts = InitializeAccounts
 if ($getAccounts) {
-    Write-Host "$($getAccounts.Count) cached account(s) found:" -ForegroundColor DarkMagenta
-    foreach($account in $getAccounts){ Write-Host "- $($account.BaseName)" -ForegroundColor DarkMagenta}
+    Write-Host "$($getAccounts.Count) cached account(s) found:" -ForegroundColor DarkGray
+    foreach($account in $getAccounts){ Write-Host "- $($account.BaseName)" -ForegroundColor DarkGray}
     Write-Host "`n"
     Write-Host "Please select an option:" -ForegroundColor Yellow
     Write-Host "1. Launch WoW" -ForegroundColor Yellow
