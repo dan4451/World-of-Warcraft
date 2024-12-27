@@ -8,14 +8,19 @@ function MainMenu {
 ###################
 ## The user is prompted to make some encrypted credentials if there are none found.
 ## If there are encrypted credentials found, the user is prompted to choose an account to log in with.
-Write-Host "Welcome to the WoW Auto-Login Script" -ForegroundColor Yellow -BackgroundColor DarkBlue
-Write-Host "Added accounts can be deleted here: $env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted" -ForegroundColor Yellow -BackgroundColor Black
+Write-Host "Welcome to the WoW Auto-Login Script`n" -ForegroundColor DarkGreen -BackgroundColor Black
+
+$wowLocation = get-content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt" -ErrorAction SilentlyContinue
+if($wowLocation){Write-Host "The current WoW launcher is configured to this path: `n$wowLocation`n" -ForegroundColor DarkGray}
+# This is the function (FindWoW) that will build out the directory we need to store the encrypted credentials and save the location of the WoW.exe file if this is the first time running the script.
+else{FindWoW}
 
 # Check if any encrypted cached accounts were found
 $getAccounts = InitializeAccounts
 if ($getAccounts) {
     Write-Host "$($getAccounts.Count) cached account(s) found:" -ForegroundColor DarkMagenta
     foreach($account in $getAccounts){ Write-Host "- $($account.BaseName)" -ForegroundColor DarkMagenta}
+    Write-Host "`n"
     Write-Host "Please select an option:" -ForegroundColor Yellow
     Write-Host "1. Launch WoW" -ForegroundColor Yellow
     Write-Host "2. Add/Remove accounts" -ForegroundColor Yellow
@@ -250,11 +255,5 @@ Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
 }
-
-
-$wowLocation = get-content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt" -ErrorAction SilentlyContinue
-if($wowLocation){Write-Host "WoW.exe location is saved here: `n$wowLocation" -ForegroundColor Yellow}
-# This is the function (FindWoW) that will build out the directory we need to store the encrypted credentials and save the location of the WoW.exe file if this is the first time running the script.
-else{FindWoW}
 
 MainMenu
