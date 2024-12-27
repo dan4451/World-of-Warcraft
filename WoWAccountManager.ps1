@@ -1,13 +1,7 @@
-############################
-##Check Baseline Variables##
-############################
+########################
+##WoW Account Manager##
+########################
 function InitializeAccounts{get-childitem "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted" -Filter "*.txt" -ErrorAction SilentlyContinue}
-$wowLocation = get-content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt" -ErrorAction SilentlyContinue
-if($wowLocation){Write-Host "WoW.exe location is saved here: `n$wowLocation" -ForegroundColor Yellow}
-# This is the function (FindWoW) that will build out the directory we need to store the encrypted credentials and save the location of the WoW.exe file if this is the first time running the script.
-else{FindWoW}
-
-MainMenu
 function MainMenu {
 ###################
 ##Begin Main Menu##
@@ -173,3 +167,11 @@ Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
 }
+
+
+$wowLocation = get-content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt" -ErrorAction SilentlyContinue
+if($wowLocation){Write-Host "WoW.exe location is saved here: `n$wowLocation" -ForegroundColor Yellow}
+# This is the function (FindWoW) that will build out the directory we need to store the encrypted credentials and save the location of the WoW.exe file if this is the first time running the script.
+else{FindWoW}
+
+MainMenu
