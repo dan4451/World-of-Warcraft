@@ -151,7 +151,7 @@ if (-not $account) {
     Write-Host "No account selected. Exiting script." -ForegroundColor Red
     exit
 }
-$AccountEncrypted = Get-Content "C:\Users\dan\Documents\WindowsPowerShell\Scripts\encrypted\$account" | ConvertTo-SecureString
+$AccountEncrypted = Get-Content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted\$account" | ConvertTo-SecureString
 $credential = New-Object System.Management.Automation.PSCredential ($account.BaseName, $AccountEncrypted)
 # Launch Application
 Start-Process "C:\WoW 1.12\World of Warcraft 1.12\VanillaFixes.exe"
