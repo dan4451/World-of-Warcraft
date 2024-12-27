@@ -19,9 +19,9 @@ if ($getAccounts) {
     Write-Host "Please select an option:" -ForegroundColor Yellow
     Write-Host "1. Launch WoW" -ForegroundColor Yellow
     Write-Host "2. Add/Remove accounts" -ForegroundColor Yellow
-    Write-Host "3. Reinitialize WoW.exe Location (if moved or switching to Vanilla Fixes/Vanilla Tweaks)" -ForegroundColor Yellow
+    Write-Host "3. Reinitialize WoW.exe Location (if install has moved or adding/switching to Vanilla Fixes/Vanilla Tweaks)" -ForegroundColor Yellow
 
-    $selection = Read-Host "Enter your choice (1 or 2)"
+    $selection = Read-Host "Enter your choice (1, 2, or 3)"
 
     switch ($selection) {
         1 { WoWHandler }
