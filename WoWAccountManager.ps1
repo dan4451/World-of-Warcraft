@@ -8,7 +8,7 @@ function MainMenu {
 ###################
 ## The user is prompted to make some encrypted credentials if there are none found.
 ## If there are encrypted credentials found, the user is prompted to choose an account to log in with.
-Write-Host "Welcome to the WoW Auto-Login Script`n" -ForegroundColor DarkGreen -BackgroundColor Black
+Write-Host "Welcome to the WoW Account Manager Script`n" -ForegroundColor DarkGreen -BackgroundColor Black
 
 $wowLocation = get-content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\WoWLocation.txt" -ErrorAction SilentlyContinue
 if($wowLocation){Write-Host "The current WoW launcher is configured to this path: `n$wowLocation`n" -ForegroundColor DarkGray}
@@ -183,6 +183,10 @@ While ($addAccount -eq "Y") {
 
 # Prompt the user for credentials
 $credential = Get-Credential -Message "Enter the WoW Account credentials to be saved to an encrypted file."
+if (-not $credential) {
+    Write-Host "No credentials entered. Returning to Main Menu." -ForegroundColor Red
+    MainMenu
+}
 
 # Convert the password to a secure string and save it to a file
 $credential.Password | ConvertFrom-SecureString | Out-File "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted\$($credential.UserName).txt"
