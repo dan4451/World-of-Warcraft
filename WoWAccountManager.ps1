@@ -16,7 +16,18 @@ $getAccounts = InitializeAccounts
 if ($getAccounts) {
     Write-Host "$($getAccounts.Count) cached account(s) was found" -ForegroundColor Yellow
     foreach($account in $getAccounts){ Write-Host "- $($account.BaseName) `n"}
-    WoWHandler
+    Write-Host "Please select an option:" -ForegroundColor Yellow
+    Write-Host "1. Launch WoW" -ForegroundColor Yellow
+    Write-Host "2. Add/Remove accounts" -ForegroundColor Yellow
+
+    $selection = Read-Host "Enter your choice (1 or 2)"
+
+    switch ($selection) {
+        1 { WoWHandler }
+        2 { CredentialHandler }
+        default { Write-Host "Invalid selection. Please try again." -ForegroundColor Red }
+    }
+
 } else {
     Write-Host "No cached accounts were found... Loading Credential Handler." -ForegroundColor Yellow
     CredentialHandler
@@ -112,6 +123,26 @@ if ($foundFile) {
 ############################
 
 Function CredentialHandler {
+    Write-Host "Please select an option:" -ForegroundColor Yellow
+    Write-Host "1. Add more accounts" -ForegroundColor Yellow
+    Write-Host "2. Remove accounts" -ForegroundColor Yellow
+    Write-Host "3. Return to main menu" -ForegroundColor Yellow
+
+    $selection = Read-Host "Enter your choice (1, 2, or 3)"
+
+    switch ($selection) {
+        1 { AddAccount }
+        2 { RemoveAccount }
+        3 { MainMenu }
+        default { Write-Host "Invalid selection. Please try again." -ForegroundColor Red }
+    }
+}
+#####################
+##Begin Add Account##
+#####################
+
+function AddAccount {
+
 
 # Check if the directory exists, and if not, create it
 $EncryptedCredentialDirectory = "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted"
@@ -137,6 +168,37 @@ CredentialHandler
 }
 MainMenu
 
+}
+
+########################
+##Begin Remove Account##
+########################
+function RemoveAccount {
+    # Get the list of encrypted account files
+    $accountFiles = Get-ChildItem "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted" -Filter "*.txt"
+
+    if ($accountFiles.Count -eq 0) {
+        Write-Host "No accounts found to remove." -ForegroundColor Red
+        return
+    }
+
+    Write-Host "Select an account to remove:" -ForegroundColor Yellow
+    for ($i = 0; $i -lt $accountFiles.Count; $i++) {
+        Write-Host "$($i + 1). $($accountFiles[$i].BaseName)"
+    }
+    Write-Host "$($accountFiles.Count + 1). Return to Main Menu"
+
+    $selection = Read-Host "Enter the number of the account to remove or return to Main Menu"
+
+    if ($selection -match '^\d+$' -and $selection -gt 0 -and $selection -le $accountFiles.Count) {
+        $accountToRemove = $accountFiles[$selection - 1]
+        Remove-Item $accountToRemove.FullName -Force
+        Write-Host "Account $($accountToRemove.BaseName) has been removed." -ForegroundColor Green
+    } elseif ($selection -eq ($accountFiles.Count + 1)) {
+        MainMenu
+    } else {
+        Write-Host "Invalid selection. Please try again." -ForegroundColor Red
+    }
 }
 
 #####################
