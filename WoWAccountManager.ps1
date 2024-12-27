@@ -8,6 +8,7 @@ function MainMenu {
 ###################
 ## The user is prompted to make some encrypted credentials if there are none found.
 ## If there are encrypted credentials found, the user is prompted to choose an account to log in with.
+Write-Host "Welcome to the WoW Auto-Login Script" -ForegroundColor Yellow -BackgroundColor DarkBlue
 Write-Host "Welcome to the WoW Auto-Login Script" -ForegroundColor Yellow -BackgroundColor Black
 Write-Host "Added accounts can be deleted here: $env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted" -ForegroundColor Yellow -BackgroundColor Black
 
@@ -135,6 +136,7 @@ if ($foundFile) {
     Write-Output "WoW.exe not found."
 }
 }
+MainMenu
 }
 
 
