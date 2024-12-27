@@ -1,3 +1,3 @@
 # World-of-Warcraft
 
-I added a script for autologins.
+I made a WoW Account Manager program.
