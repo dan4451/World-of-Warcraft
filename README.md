@@ -11,22 +11,22 @@ I was tired of copy and pasting account info out of a password manager and decid
         - (done)
 
 # Overview of Functions
-Initialization and Main Menu:
 
+Initialization and Main Menu:
 The script initializes by checking for existing encrypted account files.
 It displays a main menu with options to launch WoW, add/remove accounts, or reinitialize the WoW executable location.
-Finding WoW Executable:
 
+Finding WoW Executable:
 The FindWoW function searches for the WoW.exe file (or alternatives like VanillaFixes.exe and WoW_Tweaked.exe) on the selected drive.
 It saves the path of the found executable to a text file for future use.
-Credential Handling:
 
+Credential Handling:
 The CredentialHandler function provides options to add or remove accounts or return to the main menu.
 Adding Accounts:
 
 The AddAccount function prompts the user to enter WoW account credentials, which are then encrypted and saved to a file.
-Removing Accounts:
 
+Removing Accounts:
 The RemoveAccount function lists the saved encrypted account files and allows the user to select and delete one.
 WoW Handler:
 
