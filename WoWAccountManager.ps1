@@ -39,6 +39,7 @@ if ($getAccounts) {
     Write-Host "No cached accounts were found... Loading Credential Handler." -ForegroundColor Yellow
     CredentialHandler
 }
+MainMenu
 }
 
 Function FindWoW {
@@ -237,27 +238,53 @@ function RemoveAccount {
 
 function WoWHandler {
 
-# choose the account you want to log in with
-$account = Get-ChildItem "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted" | Out-GridView -Title "Select the account you want to log in with" -PassThru
-if (-not $account) {
-    Write-Host "No account selected. Exiting script." -ForegroundColor Red
-    exit
+    # choose the account you want to log in with
+    $account = Get-ChildItem "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted" | Out-GridView -Title "Select the account you want to log in with" -PassThru
+    if (-not $account) {
+        Write-Host "No account selected. Exiting script." -ForegroundColor Red
+        exit
+    }
+    $AccountEncrypted = Get-Content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted\$account" | ConvertTo-SecureString
+    $credential = New-Object System.Management.Automation.PSCredential ($account.BaseName, $AccountEncrypted)
+    # Launch Application
+    Start-Process "$wowLocation"
+
+    # Wait for application to launch
+    Start-Sleep -Seconds 5
+
+    # Send keys to application
+    Add-Type -AssemblyName System.Windows.Forms
+    [System.Windows.Forms.SendKeys]::SendWait($account.BaseName)
+    [System.Windows.Forms.SendKeys]::SendWait("{TAB}")
+    # There was an issue sending special characters in a password like the other sendkeys, so we have to convert the secure string to plain text and send each character individually.
+    $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($credential.Password))
+
+    # Function to escape special characters
+    function Escape-SpecialCharacters {
+        param (
+            [string]$char
+        )
+        switch ($char) {
+            "`n" { return "{ENTER}" }
+            "`t" { return "{TAB}" }
+            "{" { return "{{}" }
+            "}" { return "{}}" }
+            "%" { return "{%}" }
+            "^" { return "{^}" }
+            "+" { return "{+}" }
+            "~" { return "{~}" }
+            default { return $char }
+        }
+    }
+
+    # Send each character individually with escaping special characters
+    foreach ($char in $plainTextPassword.ToCharArray()) {
+        $escapedChar = Escape-SpecialCharacters -char $char
+        [System.Windows.Forms.SendKeys]::SendWait($escapedChar)
+        Start-Sleep -Milliseconds 50
+    }
+    Start-Sleep -Milliseconds 850
+    [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
 }
-$AccountEncrypted = Get-Content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted\$account" | ConvertTo-SecureString
-$credential = New-Object System.Management.Automation.PSCredential ($account.BaseName, $AccountEncrypted)
-# Launch Application
-Start-Process "$wowLocation"
-
-# Wait for application to launch
-Start-Sleep -Seconds 5
-
-# Send keys to application
-Add-Type -AssemblyName System.Windows.Forms
-[System.Windows.Forms.SendKeys]::SendWait($account.BaseName)
-[System.Windows.Forms.SendKeys]::SendWait("{TAB}")
-[System.Windows.Forms.SendKeys]::SendWait([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($credential.Password)))
-[System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
-
-}
-
 MainMenu
