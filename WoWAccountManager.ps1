@@ -283,7 +283,7 @@ function WoWHandler {
         [System.Windows.Forms.SendKeys]::SendWait($convertedChar)
         Start-Sleep -Milliseconds 50
     }
-    Start-Sleep -Milliseconds 850
+    Start-Sleep -Milliseconds 450
     [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
 }
