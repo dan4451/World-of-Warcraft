@@ -244,8 +244,14 @@ function WoWHandler {
         Write-Host "No account selected. Exiting script." -ForegroundColor Red
         exit
     }
-    $AccountEncrypted = Get-Content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted\$account" | ConvertTo-SecureString
-    $credential = New-Object System.Management.Automation.PSCredential ($account.BaseName, $AccountEncrypted)
+    try {
+        $AccountEncrypted = Get-Content "$env:USERPROFILE\Documents\WindowsPowerShell\Scripts\encrypted\$account" | ConvertTo-SecureString
+        $credential = New-Object System.Management.Automation.PSCredential ($account.BaseName, $AccountEncrypted)
+    } catch {
+        Write-Host "Failed to decrypt the account credentials." -ForegroundColor Red
+        exit
+    }
+
     # Launch Application
     Start-Process "$wowLocation"
 
@@ -256,7 +262,8 @@ function WoWHandler {
     Add-Type -AssemblyName System.Windows.Forms
     [System.Windows.Forms.SendKeys]::SendWait($account.BaseName)
     [System.Windows.Forms.SendKeys]::SendWait("{TAB}")
-    # There was an issue sending special characters in a password like the other sendkeys, so we have to convert the secure string to plain text and send each character individually.
+
+    # Convert the secure string to plain text
     $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($credential.Password))
 
     # Function to convert special characters
@@ -286,5 +293,9 @@ function WoWHandler {
     Start-Sleep -Milliseconds 450
     [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
+    # Clear the plaintext password from memory
+    $plainTextPassword = $null
+    [System.GC]::Collect()
 }
+
 MainMenu
