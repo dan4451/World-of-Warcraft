@@ -259,8 +259,8 @@ function WoWHandler {
     # There was an issue sending special characters in a password like the other sendkeys, so we have to convert the secure string to plain text and send each character individually.
     $plainTextPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($credential.Password))
 
-    # Function to escape special characters
-    function Escape-SpecialCharacters {
+    # Function to convert special characters
+    function Convert-SpecialCharacters {
         param (
             [string]$char
         )
@@ -277,10 +277,10 @@ function WoWHandler {
         }
     }
 
-    # Send each character individually with escaping special characters
+    # Send each character individually with converting special characters
     foreach ($char in $plainTextPassword.ToCharArray()) {
-        $escapedChar = Escape-SpecialCharacters -char $char
-        [System.Windows.Forms.SendKeys]::SendWait($escapedChar)
+        $convertedChar = Convert-SpecialCharacters -char $char
+        [System.Windows.Forms.SendKeys]::SendWait($convertedChar)
         Start-Sleep -Milliseconds 50
     }
     Start-Sleep -Milliseconds 850
